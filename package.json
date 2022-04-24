@@ -1,6 +1,6 @@
 {
   "name": "three-pixel-font",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "private": false,
   "type": "module",
@@ -26,9 +26,6 @@
   },
   "dependencies": {
     "buffer": "^6.0.3",
-    "delaunay-triangulate": "^1.1.6",
-    "esbuild-node-externals": "^1.4.1",
-    "fast-simplex-noise": "^4.0.0",
     "performance-polyfill": "^0.0.3",
     "stream-browserify": "^3.0.0",
     "typescript-module-test": "bunnybones1/typescript-module-test",
@@ -44,6 +41,7 @@
     "copy-webpack-plugin": "^9.0.1",
     "dotenv": "^10.0.0",
     "esbuild": "^0.14.38",
+    "esbuild-node-externals": "^1.4.1",
     "esbuild-plugin-glsl": "^1.1.0",
     "eslint": "^7.32.0",
     "fork-ts-checker-webpack-plugin": "^6.3.3",
