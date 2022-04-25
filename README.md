@@ -1,3 +1,5 @@
+
+[![NPM version][npm-image]][npm-url]
 # three-pixel-font
 A pixel font mesh/material
 
