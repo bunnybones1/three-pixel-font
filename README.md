@@ -1,10 +1,9 @@
 [![npm version](https://badge.fury.io/js/three-pixel-font.svg)](https://badge.fury.io/js/three-pixel-font)
 
 # three-pixel-font
-A pixel font mesh/material
+A pixel font mesh/material for three.js
 
-<img width="1045" alt="Screen Shot 2022-04-24 at 12 35 38 PM" src="https://user-images.githubusercontent.com/453513/164993438-d9dbec94-c085-4f63-8436-54ad8ec65f85.png">
-
+![pixel-font-examples](https://user-images.githubusercontent.com/453513/165019984-3ff03cd9-5636-4c9c-a9c2-f20353785414.png)
 
 This pixel-font rendering toolkit takes a glyph texture, and a couple simple text files for configuration. 
 It uses pixel-columns as a basis for rendering text with variable width, and supports one layer of overlap, on characters that need to share space.
