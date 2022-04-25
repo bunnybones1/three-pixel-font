@@ -11,7 +11,7 @@ It uses pixel-columns as a basis for rendering text with variable width, and sup
 
 ```
       const textMesh = new PixelTextMesh("Hello World.", {
-        fontFace: pixelFontFaces.cdogs_font_7x8,
+        fontFace: new PixelFontFace("path/to/cdogs_font_7x8"),
         color: new Color(1, 1, 1),
         letterSpacing: -1,
         strokeColor: new Color(0, 0, 0),
@@ -23,6 +23,24 @@ It uses pixel-columns as a basis for rendering text with variable width, and sup
         book.scale.y = 0.01 * h
       })
       this.scene.add(textMesh)
+```
+
+# font format #
+
+A font needs 3 parts
+
+- a glyph texture png
+
+- a glyph txt file
+
+- a char width txt file
+
+They must be similarly named, like this:
+
+```
+path/to/fonts/testFont.png
+path/to/fonts/testFont.txt
+path/to/fonts/testFont_char-widths.txt
 ```
 
 # Approach and History #
@@ -54,3 +72,4 @@ Boundaries between pixels in the final render tend to resolve to the incorrect n
 
 The font data, and the loading thereof, is very opinionated, and subject to change. Right now, the font faces are hard-coded in the library (CDogs 7x8 only), but it's designed to only load upon usage.
 
+Currently, the font char-widths txt file store one number per glyph, which represents how much narrower the glyph is than the max width. This is just a practical hack to keep the indices of glyphs identical to the width, in their repective txt files. This proved useful when working on a font 11 pixels wide, but whose narrowest character is 4 pixels wide. The width-difference for that character was 7, a single-digit value. 

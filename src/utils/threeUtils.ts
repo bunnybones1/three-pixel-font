@@ -1,8 +1,4 @@
-import {
-  DataTexture,
-  RGBAFormat,
-  UnsignedByteType
-} from 'three'
+import { DataTexture, RGBAFormat, UnsignedByteType } from 'three'
 
 let __tempTexture: DataTexture | undefined
 export function getTempTexture() {

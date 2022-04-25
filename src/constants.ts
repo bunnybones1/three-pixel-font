@@ -6,4 +6,3 @@ export const initOffset = {
   x: getUrlInt('x', 0),
   y: getUrlInt('y', 0)
 }
-

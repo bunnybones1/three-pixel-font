@@ -1,9 +1,4 @@
-import {
-  Camera,
-  Plane,
-  Ray,
-  Vector3
-} from 'three'
+import { Camera, Plane, Ray, Vector3 } from 'three'
 
 export function clamp(val: number, min: number, max: number) {
   return Math.min(max, Math.max(min, val))

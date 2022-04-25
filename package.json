@@ -1,12 +1,15 @@
 {
   "name": "three-pixel-font",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "private": false,
   "type": "module",
   "main": "lib/index.js",
-  "description": "A pixel font renderer",
-  "repository": "https://github.com/bunnybones1/three-pixel-font",
+  "description": "A pixel font renderer for three.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bunnybones1/three-pixel-font.git"
+  },
   "scripts": {
     "start": "yarn dev",
     "dev": "webpack-dev-server --mode development --progress --color --config config/webpack/webpack.config.local.js",
@@ -28,7 +31,6 @@
     "buffer": "^6.0.3",
     "performance-polyfill": "^0.0.3",
     "stream-browserify": "^3.0.0",
-    "typescript-module-test": "bunnybones1/typescript-module-test",
     "util": "^0.12.4"
   },
   "peerDependencies": {
@@ -68,5 +70,20 @@
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.8.0",
     "webpack-dev-server": "^4.1.0"
-  }
+  },
+  "types": "./lib/index.d.ts",
+  "bugs": {
+    "url": "https://github.com/bunnybones1/three-pixel-font/issues"
+  },
+  "homepage": "https://github.com/bunnybones1/three-pixel-font#readme",
+  "directories": {
+    "lib": "lib"
+  },
+  "keywords": [
+    "font",
+    "gamedev",
+    "threejs",
+    "webgl"
+  ],
+  "author": "Tomasz Dysinski"
 }

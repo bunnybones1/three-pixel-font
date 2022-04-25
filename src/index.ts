@@ -121,7 +121,8 @@ export default class PixelTextMesh extends Mesh {
     group: Group
   ) => {
     if (this.settings.screenSpace) {
-      const clipPos = (this.material as ShaderMaterial)!.uniforms.clipSpacePosition.value as Vector4
+      const clipPos = (this.material as ShaderMaterial)!.uniforms
+        .clipSpacePosition.value as Vector4
       __mat
         .multiplyMatrices(camera.matrixWorldInverse, this.matrixWorld)
         .premultiply(camera.projectionMatrix) //.multiply(camera.projectionMatrix)
@@ -137,8 +138,6 @@ export default class PixelTextMesh extends Mesh {
             this.renderOrder || 100 + getFontFaceSubOrder(this._newTexture)
         }
         m.uniforms.fontTexture.value = this._newTexture
-        const image = this._newTexture.image
-        m.uniforms.fontSizeInChars.value.set(image.width / 7, image.height / 8)
         this._newTexture = undefined
       }
       if (this._newFontString && this._text) {
@@ -151,6 +150,12 @@ export default class PixelTextMesh extends Mesh {
         const charPixelWidths = fontSettings.pixelWidths!
 
         const overlapPixels = -this.settings.letterSpacing
+
+        const image = (m.uniforms.fontTexture.value as Texture).image
+        m.uniforms.fontSizeInChars.value.set(
+          image.width / fontSettings.maxCharPixelWidth,
+          image.height / fontSettings.charPixelHeight
+        )
 
         const missingCharIndex = fontString.indexOf('□')
         if (missingCharIndex === -1) {
@@ -170,12 +175,16 @@ export default class PixelTextMesh extends Mesh {
             }
             const charIndex = fontString.indexOf(char)
             if (charIndex === -1) {
-              pixelLength += charPixelWidths[missingCharIndex] - overlapPixels
+              pixelLength +=
+                maxWidthOfChar -
+                charPixelWidths[missingCharIndex] -
+                overlapPixels
               if (!missingChars.includes(char)) {
                 missingChars += char
               }
             } else {
-              pixelLength += charPixelWidths[charIndex] - overlapPixels
+              pixelLength +=
+                maxWidthOfChar - charPixelWidths[charIndex] - overlapPixels
             }
           }
           return pixelLength + overlapPixels
@@ -206,7 +215,7 @@ export default class PixelTextMesh extends Mesh {
             if (charIndex === -1 && char !== undefined) {
               charIndex = missingCharIndex
             }
-            const charPixelWidth = charPixelWidths[charIndex]
+            const charPixelWidth = maxWidthOfChar - charPixelWidths[charIndex]
             for (let ipx = 0; ipx < charPixelWidth; ipx++) {
               const index = (lineOffset + xCursor) * 4
               data[index] = charIndex
@@ -303,10 +312,12 @@ const initMaterial = (settings: PixelTextSettings) => {
 
   if (settings.screenSpace) {
     safeUniforms.clipSpacePosition = new Uniform(new Vector4())
-    if(settings.pixelSizeInClipSpaceUniform) {
-    safeUniforms.pixelSizeInClipSpace = settings.pixelSizeInClipSpaceUniform
+    if (settings.pixelSizeInClipSpaceUniform) {
+      safeUniforms.pixelSizeInClipSpace = settings.pixelSizeInClipSpaceUniform
     } else {
-        throw new Error("You must provide a pixelSizeInClipSpaceUniform for screenSpace mode")
+      throw new Error(
+        'You must provide a pixelSizeInClipSpaceUniform for screenSpace mode'
+      )
     }
   }
 
