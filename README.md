@@ -1,5 +1,5 @@
+[![npm version](https://badge.fury.io/js/three-pixel-font.svg)](https://badge.fury.io/js/three-pixel-font)
 
-[![NPM version][npm-image]][npm-url]
 # three-pixel-font
 A pixel font mesh/material
 
