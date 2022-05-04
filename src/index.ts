@@ -3,7 +3,6 @@ import {
   Camera,
   Color,
   DataTexture,
-  DoubleSide,
   Group,
   IUniform,
   Material,
@@ -21,7 +20,8 @@ import {
   UVMapping,
   Vector2,
   Vector4,
-  WebGLRenderer
+  WebGLRenderer,
+  RawShaderMaterial
 } from 'three'
 import {
   listenToProperty,
@@ -125,7 +125,8 @@ export default class PixelTextMesh extends Mesh {
         .clipSpacePosition.value as Vector4
       __mat
         .multiplyMatrices(camera.matrixWorldInverse, this.matrixWorld)
-        .premultiply(camera.projectionMatrix) //.multiply(camera.projectionMatrix)
+        .premultiply(camera.projectionMatrix)
+      //.multiply(camera.projectionMatrix)
       clipPos.set(0, 0, 0, 1).applyMatrix4(__mat)
     }
     if (this.dirty) {
@@ -296,6 +297,8 @@ interface TextShaderUniforms {
   strokeColor: IUniform<Color>
   clipSpacePosition?: IUniform<Vector4>
   pixelSizeInClipSpace?: IUniform<Vector2>
+  prescale?: IUniform<number>
+  alignment?: IUniform<Vector2>
 }
 
 const initMaterial = (settings: PixelTextSettings) => {
@@ -306,11 +309,15 @@ const initMaterial = (settings: PixelTextSettings) => {
     strokeColor: new Uniform(new Color(settings.strokeColor)),
     fontSizeInChars: new Uniform(new Vector2(1, 1)),
     layoutSizeInChars: new Uniform(new Vector2(1, 1)),
-    layoutSizeInCharColumns: new Uniform(new Vector2(1, 1))
+    layoutSizeInCharColumns: new Uniform(new Vector2(1, 1)),
+    alignment: new Uniform(
+      new Vector2(settings.align, -settings.vAlign)
+    )
   }
   const safeUniforms: TextShaderUniforms = uniforms
 
   if (settings.screenSpace) {
+    safeUniforms.prescale = new Uniform(settings.prescale)
     safeUniforms.clipSpacePosition = new Uniform(new Vector4())
     if (settings.pixelSizeInClipSpaceUniform) {
       safeUniforms.pixelSizeInClipSpace = settings.pixelSizeInClipSpaceUniform
@@ -321,7 +328,7 @@ const initMaterial = (settings: PixelTextSettings) => {
     }
   }
 
-  const material = new ShaderMaterial({
+  const material = new RawShaderMaterial({
     defines: {
       USE_SCREENSPACE: settings.screenSpace,
       CONSTANT_SIZE_ON_SCREEN: settings.constantSizeOnScreen
@@ -329,8 +336,7 @@ const initMaterial = (settings: PixelTextSettings) => {
     uniforms,
     vertexShader,
     fragmentShader,
-    depthWrite: true,
-    side: DoubleSide
+    depthWrite: true
   })
 
   return material

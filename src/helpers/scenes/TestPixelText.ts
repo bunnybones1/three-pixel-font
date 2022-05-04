@@ -37,6 +37,8 @@ export default class TestPixelTextScene extends BaseTestScene {
       const book = new PixelTextMesh(
         bookText,
         {
+          align: 0,
+          vAlign: 0,
           // fontFace: new PixelFontFace('pixelFonts/cdogs_font_7x8', 7, 8),
           fontFace: new PixelFontFace('pixelFonts/good_neighbors', 11, 16),
           color: new Color(1, 1, 1),
@@ -44,7 +46,8 @@ export default class TestPixelTextScene extends BaseTestScene {
           strokeColor: new Color(0, 0, 0),
           scaleDownToPhysicalSize: true,
           screenSpace: false,
-          constantSizeOnScreen: false
+          constantSizeOnScreen: false,
+          prescale: 1
         },
         undefined,
         (w, h) => {
