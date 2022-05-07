@@ -1,21 +1,20 @@
-const path = require('path')
-const webpack = require('webpack')
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
-// const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+import path from 'path'
+import webpack from 'webpack'
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 
 let dist = process.env.DIST
 if (!dist || dist === '') {
   dist = 'local'
 }
 
-module.exports = dist => ({
+export default dist => ({
   context: process.cwd(), // to automatically find tsconfig.json
   entry: {
     main: './src/test.ts'
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve('./dist'),
     filename: 'test.js',
     publicPath: '/',
     globalObject: 'this'
@@ -84,14 +83,6 @@ module.exports = dist => ({
     extensions: ['.ts', '.js'],
     alias: {
       '~': path.join(process.cwd(), 'src')
-    },
-    plugins: [
-      // new TsconfigPathsPlugin()
-    ],
-    fallback: {
-      util: require.resolve("util/"),
-      stream: require.resolve("stream-browserify"),
-      buffer: require.resolve("buffer/")
     }
   },
   devtool: 'eval-source-map',

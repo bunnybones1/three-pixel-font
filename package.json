@@ -30,6 +30,7 @@
   "dependencies": {
     "buffer": "^6.0.3",
     "performance-polyfill": "^0.0.3",
+    "stream": "^0.0.2",
     "stream-browserify": "^3.0.0",
     "util": "^0.12.4"
   },
@@ -69,7 +70,7 @@
     "webpack-assets-by-type-plugin": "^0.1.0",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.8.0",
-    "webpack-dev-server": "^4.1.0"
+    "webpack-dev-server": "^4.9.0"
   },
   "types": "./lib/index.d.ts",
   "bugs": {
