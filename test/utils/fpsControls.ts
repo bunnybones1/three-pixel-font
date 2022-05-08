@@ -19,7 +19,7 @@ function copyCam(dst: PerspectiveCamera, src: PerspectiveCamera) {
 
 export class FPSControls {
   private _active = false
-  private _cameraLocal: PerspectiveCamera
+  private _cameraLocal = new PerspectiveCamera()
   private _fpsController: FPSController | undefined = undefined
   constructor(private _camera: PerspectiveCamera) {
     //
@@ -29,7 +29,6 @@ export class FPSControls {
       state = !this._active
     }
     if (!this._fpsController) {
-      this._cameraLocal = new PerspectiveCamera()
       copyCam(this._cameraLocal, this._camera)
       this._camera.parent!.add(this._cameraLocal)
       this._fpsController = new FPSController(

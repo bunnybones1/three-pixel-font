@@ -1,7 +1,7 @@
 import { Color, PerspectiveCamera, WebGLRenderer } from 'three'
-import PixelTextMesh from '~/index'
+import PixelTextMesh from '@lib/index'
 import { loadText } from '~/loaders/assetLoader'
-import PixelFontFace from '~/PixelFontFace'
+import PixelFontFace from '@lib/PixelFontFace'
 import { FPSControls } from '~/utils/fpsControls'
 import { getUrlFlag } from '~/utils/location'
 

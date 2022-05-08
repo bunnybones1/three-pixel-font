@@ -3,17 +3,18 @@
       "target": "es5",
       "module": "commonjs",
       "declaration": true,
-      "outDir": "./lib",
+      "outDir": "./types",
       "strict": true,
       "typeRoots": [
         "node_modules/@types",
         "src/typings"
       ],
       "baseUrl": ".",
+      "rootDirs": ["./src"],
       "paths": {
         "*": ["node_modules/*"],
         "~/*": ["src/*"]
       }
     },
-    "exclude": ["node_modules", "**/__tests__/*"]
+    "exclude": ["node_modules", "**/__tests__/*", "test"]
   }

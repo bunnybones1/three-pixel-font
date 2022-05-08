@@ -32,8 +32,8 @@ export const decorateMethodBefore = (
 ) => {
   const oldMethod = obj[methodName] as () => void
   obj[methodName] = function decoratedMethodBefore(...args: any[]) {
-    newMethod.apply(this, args)
-    const result = oldMethod.apply(this, args)
+    newMethod.apply(this, args as any)
+    const result = oldMethod.apply(this, args as any)
     return result
   }
   return () => {
@@ -48,8 +48,8 @@ export const decorateMethodAfter = (
 ) => {
   const oldMethod = obj[methodName] as () => void
   obj[methodName] = function decoratedMethodAfter(...args: any[]) {
-    const result = oldMethod.apply(this, args)
-    newMethod.apply(this, args)
+    const result = oldMethod.apply(this, args as any)
+    newMethod.apply(this, args as any)
     return result
   }
   return () => {
@@ -132,7 +132,7 @@ export function getRandomProperty(obj: any) {
 }
 
 export function reverseLookupInMap<K, V>(map: Map<K, V>, val: V) {
-  for (const [key, v] of map.entries()) {
+  for (const [key, v] of Array.from(map.entries())) {
     if (v === val) {
       return key
     }
