@@ -5,16 +5,16 @@
   "private": false,
   "type": "module",
   "main": "lib/index.js",
+  "types": "./lib/index.d.ts",
   "description": "A pixel font renderer for three.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bunnybones1/three-pixel-font.git"
   },
   "scripts": {
-    "dev": "yarn lib:watch & yarn test:watch & yarn test:serve",
-    "dev2": "yarn lib:watch & yarn test:hotserve",
+    "dev": "yarn lib:watch & yarn test:hotserve",
     "lib:watch": "node ./esbuild-watch-lib.js",
-    "lib:build": "node ./esbuild-build-lib.js",
+    "lib:build": "node ./esbuild-build-lib.js && yarn emit-declarations",
     "test:watch": "node ./esbuild-watch-test.js",
     "test:serve": "node ./esbuild-serve-test.js",
     "test:hotserve": "node ./esbuild-hotserve-test.js",
@@ -69,7 +69,6 @@
     "typescript": "4.4.2",
     "typescript-styled-plugin": "^0.18.0"
   },
-  "types": "./lib/index.d.ts",
   "bugs": {
     "url": "https://github.com/bunnybones1/three-pixel-font/issues"
   },

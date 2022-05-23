@@ -18,13 +18,6 @@ declare class Device {
     constructor();
     handleChange: () => void;
     onChange(listener: Listener, firstOneForFree?: boolean): () => boolean;
-    get isMobile(): boolean;
-    get isTablet(): boolean;
-    get isDesktop(): boolean;
-    get pixelsPerCm(): number;
-    get screenHeightCms(): number;
-    get screenWidthCms(): number;
-    get screenShorterCms(): number;
     setFPS(fps?: number): void;
 }
 declare const device: Device;

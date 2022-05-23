@@ -26,7 +26,7 @@ esbuild
       onRebuild(error, result) {
         clients.forEach((res) => res.write("data: update\n\n"));
         clients.length = 0;
-        console.log(error ? error : "...");
+        console.log(error ? error : `reloading... (${new Date()})`);
       },
     },
   })
