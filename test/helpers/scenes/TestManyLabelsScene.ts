@@ -38,14 +38,13 @@ export default class TestManyLabelsScene extends BaseTestScene {
       // bookText = '© Tomasz Dysinski. Here & now.'
 
       bookText = await await loadText(url('augustine-confessions-276', 'txt'))
-      bookText = bookText.replace(/[^\w\s\']|_/g, "")
-         .replace(/\s+/g, " ");
+      bookText = bookText.replace(/[^\w\s']|_/g, '').replace(/\s+/g, ' ')
 
-         bookText = bookText.replace(/[0-9]/g, '');
-         bookText = bookText.toLowerCase()
+      bookText = bookText.replace(/[0-9]/g, '')
+      bookText = bookText.toLowerCase()
 
-         bookText = bookText.replace(/['"]+/g, '')
-         
+      bookText = bookText.replace(/['"]+/g, '')
+
       const labelStrings = bookText
         // .slice(0, 10000)
         .split('\n')

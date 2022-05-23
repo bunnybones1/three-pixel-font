@@ -6,10 +6,10 @@ type Listener = () => void
 class Device {
   width = 1920
   height = 1080
-  aspect = 1920/1080
-  deviceWidth = 1920 
-  deviceHeight = 1080// landscape orientation
-  deviceAspect = 1920/1080// landscape orientation
+  aspect = 1920 / 1080
+  deviceWidth = 1920
+  deviceHeight = 1080 // landscape orientation
+  deviceAspect = 1920 / 1080 // landscape orientation
   orientation: DeviceOrientation = 'landscape'
   pixelRatio = 1
   targetFPS = 60
@@ -65,49 +65,6 @@ class Device {
     }
 
     return () => this.listeners.delete(listener)
-  }
-
-  get isMobile() {
-    return this.type === 'mobile'
-  }
-
-  get isTablet() {
-    return this.type === 'tablet'
-  }
-
-  get isDesktop() {
-    return this.type === 'desktop'
-  }
-
-  get pixelsPerCm() {
-    if (this.cachedPPCm === -1) {
-      // create an empty element
-      const div = document.createElement('div')
-      // give it an absolute size of one inch
-      div.style.height = '1in'
-      // append it to the body
-      const body = document.getElementsByTagName('body')[0]
-      body.appendChild(div)
-      // read the computed width
-      const ppi = getComputedStyle(div, null).getPropertyValue('height')
-      // remove it again
-      body.removeChild(div)
-      // and return the value
-      this.cachedPPCm = parseFloat(ppi) * 2.54
-    }
-    return this.cachedPPCm
-  }
-
-  get screenHeightCms() {
-    return this.height / this.pixelsPerCm
-  }
-
-  get screenWidthCms() {
-    return this.width / this.pixelsPerCm
-  }
-
-  get screenShorterCms() {
-    return Math.min(this.width, this.height) / this.pixelsPerCm
   }
 
   setFPS(fps = 60) {

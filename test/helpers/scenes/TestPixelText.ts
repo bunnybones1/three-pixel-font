@@ -15,6 +15,7 @@ export default class TestPixelTextScene extends BaseTestScene {
   constructor() {
     super()
     this.camera.position.set(0, 0, 0.5)
+
     this.camera.lookAt(0, 0, 0)
     // this.camera.updateProjectionMatrix()
     const fps = new FPSControls(this.camera as PerspectiveCamera)

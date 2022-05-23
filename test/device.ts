@@ -6,10 +6,10 @@ type Listener = () => void
 class Device {
   width = 1920
   height = 1080
-  aspect = 1920/1080
-  deviceWidth = 1920 
-  deviceHeight = 1080// landscape orientation
-  deviceAspect = 1920/1080// landscape orientation
+  aspect = 1920 / 1080
+  deviceWidth = 1920
+  deviceHeight = 1080 // landscape orientation
+  deviceAspect = 1920 / 1080 // landscape orientation
   orientation: DeviceOrientation = 'landscape'
   pixelRatio = 1
   targetFPS = 60

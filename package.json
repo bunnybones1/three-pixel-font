@@ -11,13 +11,16 @@
     "url": "git+https://github.com/bunnybones1/three-pixel-font.git"
   },
   "scripts": {
+    "dev": "yarn lib:watch & yarn test:watch & yarn test:serve",
+    "dev2": "yarn lib:watch & yarn test:hotserve",
+    "lib:watch": "node ./esbuild-watch-lib.js",
+    "lib:build": "node ./esbuild-build-lib.js",
+    "test:watch": "node ./esbuild-watch-test.js",
+    "test:serve": "node ./esbuild-serve-test.js",
+    "test:hotserve": "node ./esbuild-hotserve-test.js",
+    "test:build": "node ./esbuild-build-test.js",
     "tsc": "yarn run clean && tsc --project tsconfig.module.types.json",
     "emit-declarations": "rm -rf ./types && tsc --project tsconfig.module.types.json --declaration --emitDeclarationOnly",
-    "dev": "yarn lib:watch & yarn test:watch & yarn test:serve",
-    "lib:build": "node ./esbuild-build-lib.js",
-    "lib:watch": "node ./esbuild-watch-lib.js",
-    "test:serve": "node ./esbuild-serve-test.js",
-    "test:watch": "node ./esbuild-watch-test.js",
     "dist": "yarn dist:clean && yarn dist:build",
     "lib": "yarn lib:clean && yarn lib:build",
     "clean": "rm -rf ./lib",
@@ -25,8 +28,8 @@
     "lint:fix": "yarn run lint:fixeslint && yarn run lint:fixprettier",
     "lint:eslint": "eslint ./src --ext .ts",
     "lint:prettier": "prettier-check --config ./.prettierrc './src/**/*.ts'",
-    "lint:fixprettier": "prettier --config ./.prettierrc --write './src/**/*.ts'",
-    "lint:fixeslint": "eslint ./src --ext .ts --fix"
+    "lint:fixprettier": "prettier --config ./.prettierrc --write './src/**/*.ts' && prettier --config ./.prettierrc --write './test/**/*.ts'",
+    "lint:fixeslint": "eslint ./src --ext .ts --fix && eslint ./test --ext .ts --fix"
   },
   "dependencies": {
     "buffer": "^6.0.3",

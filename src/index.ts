@@ -310,9 +310,7 @@ const initMaterial = (settings: PixelTextSettings) => {
     fontSizeInChars: new Uniform(new Vector2(1, 1)),
     layoutSizeInChars: new Uniform(new Vector2(1, 1)),
     layoutSizeInCharColumns: new Uniform(new Vector2(1, 1)),
-    alignment: new Uniform(
-      new Vector2(settings.align, -settings.vAlign)
-    )
+    alignment: new Uniform(new Vector2(settings.align, -settings.vAlign))
   }
   const safeUniforms: TextShaderUniforms = uniforms
 
