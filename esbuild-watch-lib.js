@@ -5,9 +5,9 @@ import { nodeExternalsPlugin }  from 'esbuild-node-externals'
 build({
     entryPoints: ['src/index.ts'],
     outdir: 'lib',
-    bundle: true,
+    bundle: false,
     sourcemap: true,
-    minify: true,
+    minify: false,
     splitting: true,
     format: 'esm',
     target: ['esnext'],
