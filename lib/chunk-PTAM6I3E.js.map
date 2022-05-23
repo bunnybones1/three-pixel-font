@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../src/PixelTextSettings.ts"],
-  "sourcesContent": ["import { Color, Uniform } from 'three'\n\nimport PixelFontFace, { pixelFontFaces } from './PixelFontFace'\n\nexport interface PixelTextSettings {\n  fontFace: PixelFontFace\n  color: Color\n  align: number\n  vAlign: number\n  strokeColor: Color\n  scaleDownToPhysicalSize: boolean\n  screenSpace: boolean\n  pixelSizeInClipSpaceUniform?: Uniform\n  constantSizeOnScreen?: boolean\n  letterSpacing: number\n  prescale: number\n}\n\nconst generic: PixelTextSettings = {\n  fontFace: pixelFontFaces.cdogs_font_7x8,\n  align: 0,\n  vAlign: 0,\n  color: new Color(1, 1, 1),\n  letterSpacing: -1,\n  strokeColor: new Color(0, 0, 0),\n  scaleDownToPhysicalSize: true,\n  screenSpace: false,\n  constantSizeOnScreen: false,\n  prescale: 1\n}\nconst title: PixelTextSettings = {\n  ...generic,\n  color: new Color(0.75, 1, 0)\n}\n\nexport const pixelTextSettings = {\n  generic,\n  title\n}\n"],
-  "mappings": ";;;;;AAAA;AAkBA,IAAM,UAA6B;AAAA,EACjC,UAAU,eAAe;AAAA,EACzB,OAAO;AAAA,EACP,QAAQ;AAAA,EACR,OAAO,IAAI,MAAM,GAAG,GAAG,CAAC;AAAA,EACxB,eAAe;AAAA,EACf,aAAa,IAAI,MAAM,GAAG,GAAG,CAAC;AAAA,EAC9B,yBAAyB;AAAA,EACzB,aAAa;AAAA,EACb,sBAAsB;AAAA,EACtB,UAAU;AACZ;AACA,IAAM,QAA2B;AAAA,KAC5B;AAAA,EACH,OAAO,IAAI,MAAM,MAAM,GAAG,CAAC;AAC7B;AAEO,IAAM,oBAAoB;AAAA,EAC/B;AAAA,EACA;AACF;",
-  "names": []
-}

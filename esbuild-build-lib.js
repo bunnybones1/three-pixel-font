@@ -3,12 +3,12 @@ import { glsl } from "esbuild-plugin-glsl";
 import { nodeExternalsPlugin }  from 'esbuild-node-externals'
 
 build({
-    entryPoints: ['src/index.ts', 'src/PixelTextSettings.ts', 'src/PixelFontFace.ts'],
+    entryPoints: ['src/index.ts'],
     outdir: 'lib',
     bundle: true,
     sourcemap: true,
     minify: false,
-    splitting: true,
+    splitting: false,
     format: 'esm',
     target: ['esnext'],
     tsconfig: './tsconfig.module.json',
