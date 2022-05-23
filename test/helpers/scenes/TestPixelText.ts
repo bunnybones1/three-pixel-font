@@ -1,7 +1,6 @@
 import { Color, PerspectiveCamera, WebGLRenderer } from 'three'
-import PixelTextMesh from '@lib/index'
+import PixelText from '@lib/index'
 import { loadText } from '~/loaders/assetLoader'
-import PixelFontFace from '@lib/PixelFontFace'
 import { FPSControls } from '~/utils/fpsControls'
 import { getUrlFlag } from '~/utils/location'
 
@@ -35,13 +34,13 @@ export default class TestPixelTextScene extends BaseTestScene {
       bookText = await loadText(url('augustine-confessions-276', 'txt'))
       // bookText = '1.0\n1.0.3\n1.0.31\n1.0.3 1\n1 .0.3 1\n-.-.E.E-E'
       // bookText = '© Tomasz Dysinski. Here & now.'
-      const book = new PixelTextMesh(
+      const book = new PixelText.PixelTextMesh(
         bookText,
         {
           align: 0,
           vAlign: 0,
           // fontFace: new PixelFontFace('pixelFonts/cdogs_font_7x8', 7, 8),
-          fontFace: new PixelFontFace('pixelFonts/good_neighbors', 11, 16),
+          fontFace: new PixelText.PixelFontFace('pixelFonts/good_neighbors', 11, 16),
           color: new Color(1, 1, 1),
           letterSpacing: -1,
           strokeColor: new Color(0, 0, 0),

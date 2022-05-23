@@ -5,10 +5,10 @@ import { nodeExternalsPlugin }  from 'esbuild-node-externals'
 build({
     entryPoints: ['src/index.ts'],
     outdir: 'lib',
-    bundle: false,
+    bundle: true,
     sourcemap: true,
     minify: false,
-    splitting: true,
+    splitting: false,
     format: 'esm',
     target: ['esnext'],
     tsconfig: './tsconfig.module.json',
