@@ -5,7 +5,7 @@
   "private": false,
   "type": "module",
   "main": "lib/index.js",
-  "types": "./lib/index.d.ts",
+  "types": "types/index.d.ts",
   "description": "A pixel font renderer for three.js",
   "repository": {
     "type": "git",
