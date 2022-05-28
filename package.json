@@ -51,6 +51,7 @@
     "esbuild-node-externals": "^1.4.1",
     "esbuild-plugin-glsl": "^1.1.0",
     "eslint": "^7.32.0",
+    "get-port": "^6.1.2",
     "glslify-import-loader": "^0.1.2",
     "glslify-loader": "^2.0.0",
     "prettier": "^2.3.2",

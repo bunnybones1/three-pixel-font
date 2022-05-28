@@ -3,9 +3,13 @@ import { createServer, request } from "http";
 import { spawn } from "child_process";
 import process from "process";
 import { glsl } from "esbuild-plugin-glsl";
+import getPort, { portNumbers } from "get-port";
 
 const clients = [];
+const testPort = await getPort({port: portNumbers(8000, 8500)})
+const libPort = await getPort({port: portNumbers(3000, 3500)})
 
+console.log('hi', testPort, libPort)
 esbuild
   .build({
     entryPoints: ['test/index.ts'],
@@ -33,7 +37,8 @@ esbuild
   .catch(() => process.exit(1));
 
 esbuild.serve({ 
-  servedir: 'test-www'
+  servedir: 'test-www',
+  port: testPort
 }, {}).then(() => {
   createServer((req, res) => {
     const { url, method, headers } = req;
@@ -48,7 +53,7 @@ esbuild.serve({
     const path = ~url.split("/").pop().indexOf(".") ? url : `/index.html`; //for PWA with router
     req.pipe(
       request(
-        { hostname: "0.0.0.0", port: 8000, path, method, headers },
+        { hostname: "0.0.0.0", port: testPort, path, method, headers },
         (prxRes) => {
           if (url === "/index.js") {
 
@@ -72,7 +77,7 @@ esbuild.serve({
       ),
       { end: true }
     );
-  }).listen(3000);
+  }).listen(libPort);
 
   setTimeout(() => {
     const op = {
@@ -82,6 +87,6 @@ esbuild.serve({
     };
     const ptf = process.platform;
     if (clients.length === 0)
-      spawn(op[ptf][0], [...[op[ptf].slice(1)], `http://localhost:3000`]);
+      spawn(op[ptf][0], [...[op[ptf].slice(1)], `http://localhost:${libPort}`]);
   }, 1000); //open the default browser only if it is not opened yet
 });
