@@ -250,7 +250,7 @@ export default class PixelTextMesh extends Mesh {
           NearestFilter,
           NearestFilter
         )
-        this._newFontString = undefined
+        // this._newFontString = undefined
         if (this.onCharSizeUpdated) {
           this.onCharSizeUpdated(maxPixelWidth / maxWidthOfChar, charsHeight)
         }
