@@ -11,7 +11,6 @@ import {
   NearestFilter,
   PlaneBufferGeometry,
   RGBAFormat,
-  RepeatWrapping,
   Scene,
   ShaderMaterial,
   Texture,
@@ -21,7 +20,8 @@ import {
   Vector2,
   Vector4,
   WebGLRenderer,
-  RawShaderMaterial
+  RawShaderMaterial,
+  ClampToEdgeWrapping
 } from 'three'
 import {
   listenToProperty,
@@ -245,8 +245,8 @@ export default class PixelTextMesh extends Mesh {
           RGBAFormat,
           UnsignedByteType,
           UVMapping,
-          RepeatWrapping,
-          RepeatWrapping,
+          ClampToEdgeWrapping,
+          ClampToEdgeWrapping,
           NearestFilter,
           NearestFilter
         )
