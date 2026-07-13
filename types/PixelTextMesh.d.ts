@@ -1,4 +1,4 @@
-import { Color, RawShaderMaterial, Texture, Uniform, Vector2, Vector4 } from 'three';
+import { Color, ShaderMaterial, Texture, Uniform, Vector2, Vector4 } from 'three';
 import PixelTextMeshBase from './PixelTextMeshBase';
 import { PixelTextSettings } from './PixelTextSettings';
 type PixelTextUniforms = {
@@ -14,7 +14,7 @@ type PixelTextUniforms = {
     prescale?: Uniform<number>;
     strokeColor: Uniform<Color>;
 };
-declare class WebGLPixelTextMaterial extends RawShaderMaterial {
+declare class WebGLPixelTextMaterial extends ShaderMaterial {
     uniforms: PixelTextUniforms;
     constructor(settings: PixelTextSettings);
 }

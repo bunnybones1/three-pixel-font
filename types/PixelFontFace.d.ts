@@ -1,5 +1,7 @@
 import { Texture } from 'three';
 export type PixelFontFaceData = {
+    /** Whether atlas rows are supplied top-to-bottom. Defaults to true. */
+    flipY?: boolean;
     font: string;
     pixelWidths: readonly number[];
     texture: Texture;

@@ -2,6 +2,8 @@ import { NearestFilter, Texture } from 'three'
 import { loadText, loadTexture } from './loaders/assetLoader'
 
 export type PixelFontFaceData = {
+  /** Whether atlas rows are supplied top-to-bottom. Defaults to true. */
+  flipY?: boolean
   font: string
   pixelWidths: readonly number[]
   texture: Texture
@@ -23,13 +25,16 @@ function parsePixelWidths(source: string) {
   if (!trimmed) {
     return []
   }
-  if (/[\s,]/.test(trimmed)) {
+  if (trimmed.includes(',')) {
     return trimmed
-      .split(/[\s,]+/)
+      .split(',')
+      .map((value) => value.trim())
       .filter(Boolean)
       .map((value) => Number.parseInt(value, 10))
   }
-  return Array.from(trimmed, (value) => Number.parseInt(value, 10))
+  return Array.from(trimmed.replace(/\s/g, ''), (value) =>
+    Number.parseInt(value, 10),
+  )
 }
 
 export default class PixelFontFace {
@@ -105,6 +110,8 @@ export default class PixelFontFace {
     data.texture.minFilter = NearestFilter
     data.texture.magFilter = NearestFilter
     data.texture.generateMipmaps = false
+    data.texture.flipY = data.flipY ?? true
+    data.texture.needsUpdate = true
     this.texture = data.texture
     this.pixelWidths = pixelWidths
     this.font = font

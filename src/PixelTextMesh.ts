@@ -1,6 +1,6 @@
 import {
   Color,
-  RawShaderMaterial,
+  ShaderMaterial,
   Texture,
   Uniform,
   Vector2,
@@ -20,13 +20,8 @@ uniform vec2 layoutSizeInChars;
   uniform float prescale;
   uniform vec4 clipSpacePosition;
   uniform vec2 pixelSizeInClipSpace;
-#else
-  uniform mat4 modelViewMatrix;
-  uniform mat4 projectionMatrix;
 #endif
 
-attribute vec3 position;
-attribute vec2 uv;
 varying vec2 vUv;
 varying vec2 vUvCharCols;
 
@@ -78,6 +73,7 @@ void main() {
   if (finalTexel.a < 0.5) discard;
 
   gl_FragColor = vec4(mix(strokeColor, color, finalTexel.r), 1.0);
+  #include <colorspace_fragment>
 }
 `
 
@@ -95,7 +91,7 @@ type PixelTextUniforms = {
   strokeColor: Uniform<Color>
 }
 
-class WebGLPixelTextMaterial extends RawShaderMaterial {
+class WebGLPixelTextMaterial extends ShaderMaterial {
   declare uniforms: PixelTextUniforms
 
   constructor(settings: PixelTextSettings) {

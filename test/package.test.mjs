@@ -33,7 +33,10 @@ function createFontFace() {
 }
 
 test('creates compact overlapping layout textures', () => {
-  const layout = createPixelTextLayout('AB', createFontFace(), -1)
+  const fontFace = createFontFace()
+  const layout = createPixelTextLayout('AB', fontFace, -1)
+  assert.equal(fontFace.texture.flipY, true)
+  assert.equal(fontFace.texture.version > 0, true)
   assert.equal(layout.widthInCharColumns, 4)
   assert.equal(layout.widthInChars, 4 / 3)
   assert.equal(layout.heightInChars, 1)
@@ -47,6 +50,27 @@ test('reports missing characters and uses the fallback glyph', () => {
   const layout = createPixelTextLayout('Z', createFontFace(), -1)
   assert.deepEqual(layout.missingCharacters, ['Z'])
   layout.texture.dispose()
+})
+
+test('loads compact width digits wrapped across lines', async () => {
+  const texture = new DataTexture(
+    new Uint8Array(9 * 5 * 4),
+    9,
+    5,
+    RGBAFormat,
+    UnsignedByteType,
+  )
+  const face = new PixelFontFace('wrapped-font', 3, 5, {
+    async loadText(url) {
+      return url.endsWith('_char-widths.txt') ? '01\n20\n' : 'AB\n□C\n'
+    },
+    async loadTexture() {
+      return texture
+    },
+  })
+  await face.init()
+  assert.deepEqual(face.pixelWidths, [0, 1, 2, 0])
+  assert.equal(face.font, 'AB□C')
 })
 
 test('constructs and disposes both renderer-specific meshes', () => {
@@ -65,7 +89,7 @@ test('constructs and disposes both renderer-specific meshes', () => {
   }
   const webglMesh = new WebGLPixelTextMesh('AB', settings)
   const webgpuMesh = new WebGPUPixelTextMesh('AB', settings)
-  assert.equal(webglMesh.material.isRawShaderMaterial, true)
+  assert.equal(webglMesh.material.isShaderMaterial, true)
   assert.equal(webgpuMesh.material.isNodeMaterial, true)
   webglMesh.dispose()
   webgpuMesh.dispose()

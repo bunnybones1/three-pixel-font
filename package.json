@@ -38,7 +38,8 @@
     "build:types": "tsc --project tsconfig.types.json",
     "clean": "node ./scripts/clean.mjs",
     "prepack": "npm run build",
-    "test": "npm run typecheck && npm run build && node --test test/*.test.mjs",
+    "test": "npm run typecheck && npm run build && node --test test/*.test.mjs && npm run test:visual:build",
+    "test:visual:build": "node ./scripts/build-visual.mjs",
     "typecheck": "tsc --project tsconfig.json --noEmit"
   },
   "peerDependencies": {

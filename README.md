@@ -46,7 +46,7 @@ A font face uses three files sharing a base URL:
 - `font.png`: a fixed-cell glyph atlas.
 - `font.txt`: characters in atlas order, with line breaks ignored.
 - `font_char-widths.txt`: unused columns per character. Compact single digits
-  and whitespace/comma-separated integers are supported.
+  may wrap across lines; use comma-separated values for multi-digit widths.
 
 The font must contain `□` as the missing-glyph character. Applications host
 their own font assets; the package does not install files into a public folder.
@@ -83,7 +83,9 @@ label.dispose()
 ```
 
 Use `PixelFontFace.fromData()` when the texture and metrics are already loaded
-or generated at runtime. This is useful for JIT UI-atlas workflows.
+or generated at runtime. This is useful for JIT UI-atlas workflows. Runtime
+texture rows are treated as top-to-bottom by default; pass `flipY: false` in
+the data object only when supplying an already bottom-to-top atlas.
 
 ## Screen-space text
 
