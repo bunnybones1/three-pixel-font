@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "allowUnusedLabels": false,
+    "lib": ["ES2020", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUncheckedSideEffectImports": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true,
+    "target": "ES2020",
+    "useDefineForClassFields": true
+  },
+  "include": ["src", "test/visual.ts"]
+}

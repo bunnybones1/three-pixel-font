@@ -1,5 +1,4 @@
-declare type ChangeCallback = (newVal: any, oldVal: any) => void;
-export declare function listenToProperty(obj: any, propName: string, onChange: ChangeCallback, firstOneForFree?: boolean): void;
-export declare function stopListeningToProperty(obj: any, propName: string, onChange: ChangeCallback): void;
-export declare function migrateLiveProperty(oldObj: any, newObj: any, propName: string): void;
+type ChangeCallback<Value> = (newValue: Value, oldValue?: Value) => void;
+export declare function listenToProperty<Obj extends object, Key extends keyof Obj>(object: Obj, propertyName: Key, listener: ChangeCallback<Obj[Key]>, callImmediately?: boolean): void;
+export declare function stopListeningToProperty<Obj extends object, Key extends keyof Obj>(object: Obj, propertyName: Key, listener: ChangeCallback<Obj[Key]>): void;
 export {};

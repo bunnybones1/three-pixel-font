@@ -1,78 +1,63 @@
 import { FileLoader, LoadingManager, Texture, TextureLoader } from 'three'
 
-const __loadingManager = new LoadingManager()
+const loadingManager = new LoadingManager()
+const fileLoader = new FileLoader(loadingManager)
+const textureLoader = new TextureLoader(loadingManager)
+const textRequests = new Map<string, Promise<string>>()
+const textureRequests = new Map<string, Promise<Texture>>()
 
-let __fileLoader: FileLoader | undefined
-function getFileLoader() {
-  if (!__fileLoader) {
-    __fileLoader = new FileLoader(__loadingManager)
+export function loadText(url: string): Promise<string> {
+  const existing = textRequests.get(url)
+  if (existing) {
+    return existing
   }
-  return __fileLoader
+
+  const request = new Promise<string>((resolve, reject) => {
+    fileLoader.load(
+      url,
+      (contents: string | ArrayBuffer) => {
+        resolve(
+          typeof contents === 'string'
+            ? contents
+            : new TextDecoder().decode(contents),
+        )
+      },
+      undefined,
+      reject,
+    )
+  }).catch((error: unknown) => {
+    textRequests.delete(url)
+    throw error
+  })
+
+  textRequests.set(url, request)
+  return request
 }
 
-let __textureLoader: TextureLoader | undefined
-function getTextureLoader() {
-  if (!__textureLoader) {
-    __textureLoader = new TextureLoader(__loadingManager)
+export function loadTexture(url: string, flipY?: boolean): Promise<Texture> {
+  const existing = textureRequests.get(url)
+  if (existing) {
+    return existing
   }
-  return __textureLoader
-}
 
-export async function loadJson(url: string): Promise<object> {
-  return new Promise<object>((resolve, reject) =>
-    getFileLoader().load(
+  const request = new Promise<Texture>((resolve, reject) => {
+    textureLoader.load(
       url,
-      (fileContents: any) => resolve(JSON.parse(fileContents)),
-      undefined,
-      reject
-    )
-  )
-}
-
-export async function loadText(url: string): Promise<string> {
-  return new Promise<string>((resolve, reject) =>
-    getFileLoader().load(
-      url,
-      (fileContents: any) => resolve(fileContents),
-      undefined,
-      reject
-    )
-  )
-}
-
-const __currentlyLoadingTextureResolvers = new Map<
-  string,
-  Array<(texture: Texture) => void>
->()
-export async function loadTexture(
-  url: string,
-  flipY?: boolean
-): Promise<Texture> {
-  let promise: Promise<Texture>
-  if (__currentlyLoadingTextureResolvers.has(url)) {
-    promise = new Promise<Texture>((resolve, reject) => {
-      __currentlyLoadingTextureResolvers.get(url)!.push(resolve)
-    })
-  } else {
-    promise = new Promise<Texture>((resolve, reject) => {
-      __currentlyLoadingTextureResolvers.set(url, [resolve])
-      const onLoad = (texture: Texture) => {
-        // texture.needsUpdate = true
+      (texture) => {
         texture.name = url
-        // texture.encoding = sRGBEncoding
         if (flipY !== undefined) {
           texture.flipY = flipY
         }
-        // XXX Using this filter to get rid of NPOT warnings, is not best quality fix later
-        // texture.minFilter = NearestFilter
-        // texture.magFilter = NearestFilter
-        __currentlyLoadingTextureResolvers
-          .get(url)!
-          .forEach((resolve) => resolve(texture))
-        __currentlyLoadingTextureResolvers.delete(url)
-      }
-      getTextureLoader().load(url, onLoad, undefined, reject)
-    })
-  }
-  return promise
+        resolve(texture)
+      },
+      undefined,
+      reject,
+    )
+  }).catch((error: unknown) => {
+    textureRequests.delete(url)
+    throw error
+  })
+
+  textureRequests.set(url, request)
+  return request
 }

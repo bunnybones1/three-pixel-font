@@ -1,29 +1,29 @@
-import { BufferGeometry, Camera, Group, Material, Mesh, Scene, Texture, WebGLRenderer } from 'three';
-import PixelFontFace from './PixelFontFace';
+import { Color, ShaderMaterial, Texture, Uniform, Vector2, Vector4 } from 'three';
+import PixelTextMeshBase from './PixelTextMeshBase';
 import { PixelTextSettings } from './PixelTextSettings';
-export default class PixelTextMesh extends Mesh {
-    private _text;
-    settings: PixelTextSettings;
-    onMeasurementsUpdated?: ((mesh: PixelTextMesh) => void) | undefined;
-    onCharSizeUpdated?: ((width: number, height: number) => void) | undefined;
-    optimizeRenderOrder: boolean;
-    width: number;
-    height: number;
-    dirty: boolean;
-    livePropObject?: object;
-    livePropName?: string;
-    private _fontFace;
-    private _newTexture?;
-    private _newFontString?;
-    constructor(_text?: string, settings?: PixelTextSettings, onMeasurementsUpdated?: ((mesh: PixelTextMesh) => void) | undefined, onCharSizeUpdated?: ((width: number, height: number) => void) | undefined, optimizeRenderOrder?: boolean);
-    get text(): string;
-    set text(text: string);
-    onFontFaceChange: (newFontFace: PixelFontFace, oldFontFace: PixelFontFace) => void;
-    onFontTextureUpdate: (texture: Texture) => void;
-    onFontUpdate: (fontString: string) => void;
-    onBeforeRender: (renderer: WebGLRenderer, scene: Scene, camera: Camera, geometry: BufferGeometry, material: Material, group: Group) => void;
-    updateText: (value?: any) => void;
-    onRemove(): void;
-    private regenerateGeometry;
-    private updateMeasurements;
+type PixelTextUniforms = {
+    alignment: Uniform<Vector2>;
+    clipSpacePosition?: Uniform<Vector4>;
+    color: Uniform<Color>;
+    fontSizeInChars: Uniform<Vector2>;
+    fontTexture: Uniform<Texture>;
+    layoutSizeInCharColumns: Uniform<Vector2>;
+    layoutSizeInChars: Uniform<Vector2>;
+    layoutTexture: Uniform<Texture>;
+    pixelSizeInClipSpace?: Uniform<Vector2>;
+    prescale?: Uniform<number>;
+    strokeColor: Uniform<Color>;
+};
+declare class WebGLPixelTextMaterial extends ShaderMaterial {
+    uniforms: PixelTextUniforms;
+    constructor(settings: PixelTextSettings);
 }
+/** Pixel-font mesh for Three's WebGLRenderer. */
+export default class PixelTextMesh extends PixelTextMeshBase<WebGLPixelTextMaterial> {
+    constructor(text?: string, settings?: PixelTextSettings, onMeasurementsUpdated?: (mesh: PixelTextMesh) => void, onCharSizeUpdated?: (width: number, height: number) => void, optimizeRenderOrder?: boolean);
+    protected setClipSpacePosition(position: Vector4): void;
+    protected setFontSizeInChars(width: number, height: number): void;
+    protected setFontTexture(fontTexture: Texture): void;
+    protected setLayout(layoutTexture: Texture, widthInChars: number, heightInChars: number, widthInCharColumns: number): void;
+}
+export { PixelTextMesh as WebGLPixelTextMesh };

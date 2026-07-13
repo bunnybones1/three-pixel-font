@@ -1,54 +1,59 @@
-import { removeFromArray } from './arrayUtils'
-
-type ChangeCallback = (newVal: any, oldVal: any) => void
+type ChangeCallback<Value> = (newValue: Value, oldValue?: Value) => void
+type InternalChangeCallback = ChangeCallback<unknown>
 
 class LiveProperty {
-  get listenerCount() {
-    return this.listeners.length
-  }
-  private obj: any
-  private propName: string
-  private value: any
-  private listeners: ChangeCallback[]
-  constructor(obj: any, propName: string) {
-    this.propName = propName
-    this.listeners = []
+  private object: object | null = null
+  private value: unknown
+  private readonly listeners = new Set<InternalChangeCallback>()
+
+  constructor(
+    object: object,
+    private readonly propertyName: PropertyKey,
+  ) {
     this.setValue = this.setValue.bind(this)
-    this.attach(obj)
+    this.attach(object)
   }
 
-  attach(obj: any) {
-    if (this.obj) {
-      this.release()
-    }
-    this.obj = obj
-    const value = this.obj[this.propName]
-    Object.defineProperty(obj, this.propName, {
-      configurable: true,
-      set: this.setValue,
-      get: () => this.value
-    })
-    this.setValue(value)
+  get listenerCount() {
+    return this.listeners.size
   }
+
+  addListener(listener: InternalChangeCallback, callImmediately: boolean) {
+    if (callImmediately) {
+      listener(this.value)
+    }
+    this.listeners.add(listener)
+  }
+
+  removeListener(listener: InternalChangeCallback) {
+    this.listeners.delete(listener)
+  }
+
   release() {
-    Object.defineProperty(this.obj, this.propName, {
+    if (!this.object) {
+      return
+    }
+    Object.defineProperty(this.object, this.propertyName, {
+      configurable: true,
+      enumerable: true,
       value: this.value,
-      writable: true
+      writable: true,
+    })
+    this.object = null
+  }
+
+  private attach(object: object) {
+    this.object = object
+    this.value = (object as Record<PropertyKey, unknown>)[this.propertyName]
+    Object.defineProperty(object, this.propertyName, {
+      configurable: true,
+      enumerable: true,
+      get: () => this.value,
+      set: this.setValue,
     })
   }
-  hasListener(listener: ChangeCallback) {
-    return this.listeners.indexOf(listener) !== -1
-  }
-  addListener(listener: ChangeCallback, firstOneForFree = true) {
-    if (firstOneForFree) {
-      listener(this.value, undefined)
-    }
-    this.listeners.push(listener)
-  }
-  removeListener(listener: ChangeCallback) {
-    removeFromArray(this.listeners, listener)
-  }
-  private setValue(value: any) {
+
+  private setValue(value: unknown) {
     if (this.value === value) {
       return
     }
@@ -60,69 +65,55 @@ class LiveProperty {
   }
 }
 
-const propGroupLibrary = new Map<any, Map<string, LiveProperty>>()
+const liveProperties = new Map<object, Map<PropertyKey, LiveProperty>>()
 
-function getObjectPropGroup(obj: any) {
-  if (!propGroupLibrary.has(obj)) {
-    propGroupLibrary.set(obj, new Map<string, LiveProperty>())
+function getLiveProperty(object: object, propertyName: PropertyKey) {
+  let objectProperties = liveProperties.get(object)
+  if (!objectProperties) {
+    objectProperties = new Map<PropertyKey, LiveProperty>()
+    liveProperties.set(object, objectProperties)
   }
-  return propGroupLibrary.get(obj)!
-}
 
-function getLiveProperty(obj: any, propName: string) {
-  const objectPropGroup = getObjectPropGroup(obj)
-  if (!objectPropGroup.has(propName)) {
-    objectPropGroup.set(propName, new LiveProperty(obj, propName))
+  let liveProperty = objectProperties.get(propertyName)
+  if (!liveProperty) {
+    liveProperty = new LiveProperty(object, propertyName)
+    objectProperties.set(propertyName, liveProperty)
   }
-  return objectPropGroup.get(propName)!
+  return liveProperty
 }
 
-export function listenToProperty(
-  obj: any,
-  propName: string,
-  onChange: ChangeCallback,
-  firstOneForFree = true
+export function listenToProperty<Obj extends object, Key extends keyof Obj>(
+  object: Obj,
+  propertyName: Key,
+  listener: ChangeCallback<Obj[Key]>,
+  callImmediately = true,
 ) {
-  getLiveProperty(obj, propName).addListener(onChange, firstOneForFree)
+  getLiveProperty(object, propertyName).addListener(
+    listener as InternalChangeCallback,
+    callImmediately,
+  )
 }
 
-export function stopListeningToProperty(
-  obj: any,
-  propName: string,
-  onChange: ChangeCallback
+export function stopListeningToProperty<
+  Obj extends object,
+  Key extends keyof Obj,
+>(
+  object: Obj,
+  propertyName: Key,
+  listener: ChangeCallback<Obj[Key]>,
 ) {
-  const propGroup = propGroupLibrary.get(obj)
-  if (propGroup) {
-    const liveProp = propGroup.get(propName)
-    if (liveProp) {
-      liveProp.removeListener(onChange)
-      if (liveProp.listenerCount === 0) {
-        liveProp.release()
-        propGroup.delete(propName)
-      }
-    }
-    if (propGroup.size === 0) {
-      propGroupLibrary.delete(obj)
-    }
+  const objectProperties = liveProperties.get(object)
+  const liveProperty = objectProperties?.get(propertyName)
+  if (!objectProperties || !liveProperty) {
+    return
   }
-}
 
-export function migrateLiveProperty(
-  oldObj: any,
-  newObj: any,
-  propName: string
-) {
-  const oldPropGroup = propGroupLibrary.get(oldObj)
-  if (oldPropGroup) {
-    const liveProp = oldPropGroup.get(propName)
-    if (liveProp) {
-      liveProp.attach(newObj)
-      oldPropGroup.delete(propName)
-      const newPropGroup = getObjectPropGroup(newObj)
-      newPropGroup.set(propName, liveProp)
-      if (oldPropGroup.size === 0) {
-        propGroupLibrary.delete(oldObj)
-      }
-    }
+  liveProperty.removeListener(listener as InternalChangeCallback)
+  if (liveProperty.listenerCount === 0) {
+    liveProperty.release()
+    objectProperties.delete(propertyName)
+  }
+  if (objectProperties.size === 0) {
+    liveProperties.delete(object)
   }
 }
