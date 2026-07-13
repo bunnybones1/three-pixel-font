@@ -1,15 +1,17 @@
 import { DataTexture, RGBAFormat, UnsignedByteType } from 'three'
 
-let __tempTexture: DataTexture | undefined
-export function getTempTexture() {
-  if (!__tempTexture) {
-    const s = 4
-    const total = s * s * 4
-    const data = new Uint8Array(total)
-    for (let i = 0; i < total; i++) {
-      data[i] = 0
-    }
-    __tempTexture = new DataTexture(data, s, s, RGBAFormat, UnsignedByteType)
+let fallbackTexture: DataTexture | undefined
+
+export function getFallbackTexture() {
+  if (!fallbackTexture) {
+    fallbackTexture = new DataTexture(
+      new Uint8Array(4),
+      1,
+      1,
+      RGBAFormat,
+      UnsignedByteType,
+    )
+    fallbackTexture.needsUpdate = true
   }
-  return __tempTexture!
+  return fallbackTexture
 }

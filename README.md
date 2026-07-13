@@ -1,76 +1,107 @@
-[![npm version](https://badge.fury.io/js/three-pixel-font.svg)](https://badge.fury.io/js/three-pixel-font)
-
 # three-pixel-font
-A pixel font mesh/material for three.js
 
-![pixel-font-examples](https://user-images.githubusercontent.com/453513/165019984-3ff03cd9-5636-4c9c-a9c2-f20353785414.png)
+Pixel-perfect bitmap text meshes for Three.js WebGL and WebGPU. Text layout is
+generated just in time as a compact data texture; glyphs remain crisp at
+integer pixel sizes and font atlases use nearest-neighbour sampling.
 
-This pixel-font rendering toolkit takes a glyph texture, and a couple simple text files for configuration. 
-It uses pixel-columns as a basis for rendering text with variable width, and supports one layer of overlap, on characters that need to share space.
+Version 1 targets the latest Three.js release (`0.185.x`) and supports both
+renderers through separate tree-shakeable entry points. Version 0.0.13 remains
+the final legacy release for Three 0.134.
 
-# example #
+## Install
 
-```
-      const textMesh = new PixelTextMesh("Hello World.", {
-        fontFace: new PixelFontFace("path/to/cdogs_font_7x8"),
-        color: new Color(1, 1, 1),
-        letterSpacing: -1,
-        strokeColor: new Color(0, 0, 0),
-        scaleDownToPhysicalSize: true,
-        screenSpace: false,
-        constantSizeOnScreen: false
-      }, undefined, (w, h) => {
-        book.scale.x = 0.01 * w
-        book.scale.y = 0.01 * h
-      })
-      this.scene.add(textMesh)
+```sh
+npm install three-pixel-font three
 ```
 
-# font format #
+## Choose a renderer
 
-A font needs 3 parts
+For `WebGLRenderer`, the classic `PixelTextMesh` name remains available:
 
-- a glyph texture png
-
-- a glyph txt file
-
-- a char width txt file
-
-They must be similarly named, like this:
-
-```
-path/to/fonts/testFont.png
-path/to/fonts/testFont.txt
-path/to/fonts/testFont_char-widths.txt
+```ts
+import PixelTextMesh, {
+  PixelFontFace,
+  type PixelTextSettings,
+} from 'three-pixel-font/webgl'
 ```
 
-# Approach and History #
-Originally it was a very simple approach to pixel font rendering:
+For `WebGPURenderer`, use the WebGPU entry point. It uses TSL and
+`NodeMaterial` internally:
 
-A block of text would be comprised of a font glyph texture, and a layout texture.
-The layout texture was a single-channel 8bit texture where each pixel's value was literally the glyph index.
+```ts
+import PixelTextMesh, {
+  PixelFontFace,
+  type PixelTextSettings,
+} from 'three-pixel-font/webgpu'
+```
 
-This was great for fixed-width fonts, but legibility suffered.
+The root entry point also provides named `WebGLPixelTextMesh` and
+`WebGPUPixelTextMesh` exports. Prefer the renderer-specific entry point so a
+WebGL build does not import WebGPU/TSL code.
 
-The algorithm was extended to treat every pixel of width of a character as a distinct lookup. 
-Fonts are still fixed-height, but each pixel column of text is no longer locked to a glyph grid.
+## Font assets
 
-The layout texture grew significantly to accomidate this. 
-A single character used to be 1 8bit value, but now a single character needs a glyph index and a pixel offset for each column of pixels. 
+A font face uses three files sharing a base URL:
 
-A 7 pixel wide glyph now needed 7 * 2 * 8bit of data on the layout texture. 
-For WebGL 1.0 compatibility reasons, the layout texture was made 4-channel, not the minimal 2-channel needed.
+- `font.png`: a fixed-cell glyph atlas.
+- `font.txt`: characters in atlas order, with line breaks ignored.
+- `font_char-widths.txt`: unused columns per character. Compact single digits
+  and whitespace/comma-separated integers are supported.
 
-Inspired by fonts like C-Dogs by Ronny Wester, outlines in the font actually look best when they are overlapping (maximum).
+The font must contain `□` as the missing-glyph character. Applications host
+their own font assets; the package does not install files into a public folder.
 
-The final upgrade to the algorithm was to use the final unused 2 channels of the layout texture's 4 channels, to provide an alternate glyph column.
+```ts
+import { Color } from 'three'
+import PixelTextMesh, {
+  PixelFontFace,
+  type PixelTextSettings,
+} from 'three-pixel-font/webgpu'
 
-Every column of the final text can sample two different glyph columns and max them.
+const fontFace = new PixelFontFace('/pixelFonts/cdogs_font_7x8', 7, 8)
+await fontFace.init()
 
-# Limitations #
+const settings: PixelTextSettings = {
+  align: 0,
+  color: new Color('white'),
+  constantSizeOnScreen: false,
+  fontFace,
+  letterSpacing: -1,
+  prescale: 1,
+  scaleDownToPhysicalSize: true,
+  screenSpace: false,
+  strokeColor: new Color('black'),
+  vAlign: 0,
+}
 
-Boundaries between pixels in the final render tend to resolve to the incorrect neighbour, creating pixel-thin artifacts.
+const label = new PixelTextMesh('READY', settings)
+scene.add(label)
 
-The font data, and the loading thereof, is very opinionated, and subject to change. Right now, the font faces are hard-coded in the library (CDogs 7x8 only), but it's designed to only load upon usage.
+// When the label will not be used again:
+label.removeFromParent()
+label.dispose()
+```
 
-Currently, the font char-widths txt file store one number per glyph, which represents how much narrower the glyph is than the max width. This is just a practical hack to keep the indices of glyphs identical to the width, in their repective txt files. This proved useful when working on a font 11 pixels wide, but whose narrowest character is 4 pixels wide. The width-difference for that character was 7, a single-digit value. 
+Use `PixelFontFace.fromData()` when the texture and metrics are already loaded
+or generated at runtime. This is useful for JIT UI-atlas workflows.
+
+## Screen-space text
+
+Set `screenSpace` and provide a `Uniform<Vector2>` whose value contains the
+size of one physical pixel in clip space. Set `constantSizeOnScreen` to cancel
+perspective scaling.
+
+## Publishing
+
+```sh
+npm test
+npm pack --dry-run
+npm publish
+```
+
+Only the runtime bundles, declarations, README, and license are published.
+
+The development toolchain is intentionally small: current Three.js and its
+types, esbuild 0.28, and TypeScript 6.0. TypeScript 7.0.2 was evaluated but its
+compiler currently stalls on the Three.js TSL declaration graph, so it is not
+yet suitable for the package build.

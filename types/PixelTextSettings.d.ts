@@ -1,17 +1,19 @@
-import { Color, Uniform } from 'three';
+import { Color, Vector2 } from 'three';
+import type { Uniform } from 'three';
 import PixelFontFace from './PixelFontFace';
 export interface PixelTextSettings {
-    fontFace: PixelFontFace;
-    color: Color;
     align: number;
-    vAlign: number;
-    strokeColor: Color;
+    color: Color;
+    constantSizeOnScreen?: boolean;
+    fontFace: PixelFontFace;
+    letterSpacing: number;
+    pixelSizeInClipSpaceUniform?: Uniform<Vector2>;
+    prescale: number;
+    /** @deprecated Retained for 0.x settings compatibility; it has no effect. */
     scaleDownToPhysicalSize: boolean;
     screenSpace: boolean;
-    pixelSizeInClipSpaceUniform?: Uniform;
-    constantSizeOnScreen?: boolean;
-    letterSpacing: number;
-    prescale: number;
+    strokeColor: Color;
+    vAlign: number;
 }
 export declare const pixelTextSettings: {
     generic: PixelTextSettings;
