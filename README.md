@@ -103,7 +103,19 @@ npm publish
 
 Only the runtime bundles, declarations, README, and license are published.
 
+## Visual harness
+
+Run `npm run dev:visual` to serve the side-by-side WebGL and WebGPU harness at
+`http://127.0.0.1:4180/`. Vite serves the bitmap atlas, character map, and
+width table as part of the harness. `npm run build:visual` creates the
+production output in `dist/visual`.
+
+`npm run test:visual` starts and stops the Vite development server around the
+browser assertions. `npm run test:visual:production` does the same with a
+production build mounted at `/three-pixel-font-visual/`, exercising non-root
+asset URLs. Both checks are included in `npm test` and `npm run release:check`.
+
 The development toolchain is intentionally small: current Three.js and its
-types, esbuild 0.28, and TypeScript 6.0. TypeScript 7.0.2 was evaluated but its
-compiler currently stalls on the Three.js TSL declaration graph, so it is not
-yet suitable for the package build.
+types, esbuild 0.28, Vite, Playwright, and TypeScript 6.0. TypeScript 7.0.2 was
+evaluated but its compiler currently stalls on the Three.js TSL declaration
+graph, so it is not yet suitable for the package build.

@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 import {
   Color,
   DataTexture,
@@ -22,6 +24,7 @@ const pixelScale = 4
 const sampleText = 'PIXEL FONT 1.0\nWebGL + WebGPU\n0123456789 !? □'
 const status = document.querySelector<HTMLDivElement>('#status')!
 const renders = document.querySelector<HTMLDivElement>('#renders')!
+const visualRoot = document.documentElement
 
 type TextMeshConstructor = new (
   text: string,
@@ -30,8 +33,9 @@ type TextMeshConstructor = new (
   onCharSizeUpdated?: (width: number, height: number) => void,
 ) => PixelTextMeshBase<never>
 
-function createFigure(label: string) {
+function createFigure(label: string, renderer: 'webgl' | 'webgpu') {
   const figure = document.createElement('figure')
+  figure.dataset.renderer = renderer
   const caption = document.createElement('figcaption')
   caption.textContent = label
   figure.append(caption)
@@ -151,8 +155,14 @@ function createScene(
   return { camera, mesh, scene }
 }
 
-async function main() {
-  const fontFace = new PixelFontFace('pixelFonts/cdogs_font_7x8', 7, 8)
+function assetUrl(path: string) {
+  const baseUrl = new URL(import.meta.env.BASE_URL, document.baseURI)
+  return new URL(path, baseUrl).href
+}
+
+export async function runVisualHarness() {
+  visualRoot.dataset.visualState = 'loading'
+  const fontFace = new PixelFontFace(assetUrl('cdogs_font_7x8'), 7, 8)
   await fontFace.init()
 
   const webglRenderer = new WebGLRenderer({
@@ -162,7 +172,10 @@ async function main() {
   webglRenderer.setClearColor('#25272a')
   webglRenderer.setPixelRatio(1)
   webglRenderer.setSize(viewportWidth, viewportHeight)
-  createFigure('WebGL / ShaderMaterial').append(webglRenderer.domElement)
+  webglRenderer.domElement.dataset.renderer = 'webgl'
+  createFigure('WebGL / ShaderMaterial', 'webgl').append(
+    webglRenderer.domElement,
+  )
   const webgl = createScene(
     PixelTextMesh as unknown as TextMeshConstructor,
     fontFace,
@@ -178,26 +191,28 @@ async function main() {
   webgpuRenderer.setClearColor('#25272a')
   webgpuRenderer.setPixelRatio(1)
   webgpuRenderer.setSize(viewportWidth, viewportHeight)
-  createFigure('WebGPU / TSL NodeMaterial').append(webgpuRenderer.domElement)
+  webgpuRenderer.domElement.dataset.renderer = 'webgpu'
+  createFigure('WebGPU / TSL NodeMaterial', 'webgpu').append(
+    webgpuRenderer.domElement,
+  )
   await webgpuRenderer.init()
   const webgpu = createScene(
     WebGPUPixelTextMesh as unknown as TextMeshConstructor,
     fontFace,
   )
 
-  status.textContent = 'WebGL and WebGPU running; compare glyph pixels below.'
-  document.title = 'PASS — three-pixel-font visual tests'
-
+  let renderedFrames = 0
   const render = () => {
     webglRenderer.render(webgl.scene, webgl.camera)
     webgpuRenderer.render(webgpu.scene, webgpu.camera)
+    renderedFrames += 1
+    if (renderedFrames === 2) {
+      status.textContent =
+        'WebGL and WebGPU running; compare glyph pixels below.'
+      document.title = 'PASS — three-pixel-font visual tests'
+      visualRoot.dataset.visualState = 'ready'
+    }
     requestAnimationFrame(render)
   }
   render()
 }
-
-void main().catch((error: unknown) => {
-  console.error(error)
-  status.textContent = `FAIL: ${error instanceof Error ? error.message : String(error)}`
-  document.title = 'FAIL — three-pixel-font visual tests'
-})

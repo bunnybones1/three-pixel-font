@@ -3,6 +3,8 @@ node_modules
 dist
 build
 coverage
+playwright-report
+test-results
 donotcommit*
 tsconfig.tsbuildinfo
 *.tgz

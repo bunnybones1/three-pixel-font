@@ -36,20 +36,32 @@
     "build": "npm run clean && npm run build:js && npm run build:types",
     "build:js": "node ./scripts/build.mjs",
     "build:types": "tsc --project tsconfig.types.json",
+    "build:visual": "vite build --config vite.visual.config.mjs",
+    "build:visual:production": "vite build --config vite.visual.config.mjs --mode visual-production",
     "clean": "node ./scripts/clean.mjs",
+    "dev:visual": "vite --config vite.visual.config.mjs",
     "prepack": "npm run build",
-    "test": "npm run typecheck && npm run build && node --test test/*.test.mjs && npm run test:visual:build",
-    "test:visual:build": "node ./scripts/build-visual.mjs",
+    "preview:visual": "vite preview --config vite.visual.config.mjs",
+    "preview:visual:production": "vite preview --config vite.visual.config.mjs --mode visual-production",
+    "release:check": "npm test && npm pack --dry-run",
+    "test": "npm run typecheck && npm run build && node --test test/*.test.mjs && npm run test:visual && npm run test:visual:production",
+    "test:visual": "playwright test --config playwright.visual.config.mjs",
+    "test:visual:production": "npm run build:visual:production && playwright test --config playwright.visual-production.config.mjs",
     "typecheck": "tsc --project tsconfig.json --noEmit"
   },
   "peerDependencies": {
     "three": ">=0.185.0 <0.186.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/pngjs": "^6.0.5",
     "@types/three": "^0.185.1",
     "esbuild": "^0.28.1",
+    "pixelmatch": "^7.2.0",
+    "pngjs": "^7.0.0",
     "three": "^0.185.1",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite": "^8.1.4"
   },
   "bugs": {
     "url": "https://github.com/bunnybones1/three-pixel-font/issues"
