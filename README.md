@@ -1,5 +1,9 @@
 # three-pixel-font
 
+[![npm version](https://badge.fury.io/js/three-pixel-font.svg)](https://badge.fury.io/js/three-pixel-font)
+
+![Three Pixel Font — WebGL and WebGPU](./assets/three-pixel-font-hero.png)
+
 Pixel-perfect bitmap text meshes for Three.js WebGL and WebGPU. Text layout is
 generated just in time as a compact data texture; glyphs remain crisp at
 integer pixel sizes and font atlases use nearest-neighbour sampling.
